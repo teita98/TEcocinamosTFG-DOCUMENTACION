@@ -400,8 +400,9 @@ USE tecocinamos;
 
 El diseño de interfaz se elaboró en Figma. Se ha incluido Únicamente la versión móvil.
 
-[🔗 Figma - TEcocinamos (móvil)](https://www.figma.com/design/HI5PZMNGbTHOEhQr9DNLc9/TEcocinamos-Movil?node-id=0-1&t=N6xdXbM5jhKo664P-1)
+[🔗 Figma - TEcocinamos (móvil) - PROTOTIPO](https://www.figma.com/proto/HI5PZMNGbTHOEhQr9DNLc9/TEcocinamos-Movil?node-id=0-1&t=J7MC2gSSDUymAioi-1)
 
+[🔗 Figma - TEcocinamos (móvil) - DISEÑO](https://www.figma.com/design/HI5PZMNGbTHOEhQr9DNLc9/TEcocinamos-Movil?node-id=0-1&t=LE5O6kOXQYMOjFIl-1)
 ---
 
 ## 7. Conclusión
