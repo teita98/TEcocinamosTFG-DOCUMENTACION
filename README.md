@@ -183,13 +183,13 @@ En `src/main/resources/application.properties`, agregar configuración SMTP. Eje
 
 1. **Accedemos a la URL de TEcocinamos**
 
-   ![pgIncicio](images\pgInicio.png)
+   ![pgIncicio](../images\pgInicio.png)
 
    > _Página de inicio y formulario de contacto/evento._
 
 2. **Inicio de sesión**
 
-   ![pgInicioSesion](images\usuario.png)
+   ![pgInicioSesion](../images\usuario.png)
 
    > _Cuando nos registramos, recibimos un email de bienvenida._
 
@@ -197,7 +197,7 @@ En `src/main/resources/application.properties`, agregar configuración SMTP. Eje
 
 3. **Realizamos un pedido**
 
-   ![compra](images\compra.png)
+   ![compra](../images\compra.png)
 
    > _Cuando realizamos un pedido, podemos pagar con paypal o tarjeta._
 
