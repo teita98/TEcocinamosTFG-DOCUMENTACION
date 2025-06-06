@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TECOCINAMOS · Diagrama de Componentes</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <!-- HEADER / NAVBAR -->
+    <header>
+      <div class="nav-container">
+        <a href="index.html" class="logo">TECOCINAMOS</a>
+        <nav class="nav-links">
+          <a href="index.html">Inicio</a>
+          <a href="doc-api.html">API</a>
+          <a href="casos-uso.html">Casos de Uso</a>
+          <a href="diagrama-clases.html">Clases</a>
+          <a href="diagrama-er.html">ER</a>
+          <a href="diagrama-componentes.html" class="active">Componentes</a>
+          <a href="casos-prueba.html">Casos de Prueba</a>
+        </nav>
+        <button class="hamburger" aria-label="Abrir menú móvil">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+      <div id="mobile-menu">
+        <div class="menu-section">
+          <h3>Menú</h3>
+          <a href="index.html">Inicio</a>
+          <a href="doc-api.html">API</a>
+          <a href="casos-uso.html">Casos de Uso</a>
+          <a href="diagrama-clases.html">Diagrama Clases</a>
+          <a href="diagrama-er.html">Diagrama ER</a>
+          <a href="diagrama-componentes.html" class="active">Componentes</a>
+          <a href="casos-prueba.html">Casos de Prueba</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="main-container">
+      <section class="section">
+        <h1>Diagrama de Componentes</h1>
+        <p>
+          El diagrama de componentes muestra la arquitectura global de la
+          aplicación TECOCINAMOS: front-end en Angular, back-end en Spring Boot,
+          base de datos MySQL y despliegue en Azure.
+        </p>
+
+        <div class="img-container">
+          <img
+            src="assets/images/diagrama-componentes.png"
+            alt="Diagrama de Componentes"
+          />
+        </div>
+
+        <h2>Descripción de Componentes</h2>
+        <ul class="custom-list">
+          <li>
+            <strong>Frontend (Angular)</strong>:
+            <ul class="custom-list">
+              <li>AppComponent (root)</li>
+              <li>MenuComponent (barra de navegación)</li>
+              <li>PlatoListComponent (lista de platos)</li>
+              <li>PlatoDetalleComponent (detalle de plato)</li>
+              <li>CarritoComponent (carrito de compras)</li>
+              <li>LoginComponent, RegisterComponent</li>
+              <li>
+                AdminPlatosComponent, AdminPedidosComponent,
+                AdminUsuariosComponent
+              </li>
+              <li>
+                Services (AuthService, ApiService, PedidoService,
+                FacturaService)
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="custom-list">
+          <li>
+            <strong>Backend (Spring Boot)</strong>:
+            <ul class="custom-list">
+              <li>
+                Controllers (UsuarioController, PlatoController,
+                PedidoController, FacturaController, ContactController, etc.)
+              </li>
+              <li>
+                Services (UsuarioService, PlatoService, PedidoService,
+                FacturaService, MailService, etc.)
+              </li>
+              <li>
+                Repositories (UsuarioRepository, PlatoRepository,
+                PedidoRepository, etc.)
+              </li>
+              <li>
+                Security (JwtAuthFilter, SecurityConfig,
+                CustomUserDetailsService)
+              </li>
+              <li>Utilidades (LogAuditoriaUtil, PdfGeneratorUtil)</li>
+              <li>
+                Model (entidades JPA: Usuario, Plato, Pedido, Ingrediente, etc.)
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="custom-list">
+          <li>
+            <strong>Base de Datos (MySQL)</strong>:
+            <ul class="custom-list">
+              <li>
+                Tablas: rol, usuario, estado, pedido, detalles_pedido,
+                categoria, plato, plato_ingrediente, ingrediente, proveedor,
+                alergenos, ingrediente_alergeno, log_auditoria
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="custom-list">
+          <li>
+            <strong>Infraestructura</strong>:
+            <ul class="custom-list">
+              <li>Azure App Service: despliegue del JAR del backend.</li>
+              <li>Azure Database for MySQL: base de datos en la nube.</li>
+              <li>Hostinguer: despliegue de Angular.</li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+
+      <footer>
+        <p>© 2025 Teresa Charlo Millán | Diagrama de Componentes</p>
+      </footer>
+    </div>
+
+    <script src="assets/js/scripts.js"></script>
+  </body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TECOCINAMOS · Diagrama Entidad-Relación</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <!-- HEADER / NAVBAR -->
+  <header>
+    <div class="nav-container">
+      <a href="index.html" class="logo">TECOCINAMOS</a>
+      <nav class="nav-links">
+        <a href="index.html">Inicio</a>
+         <a href="doc-api.html">API</a>
+        <a href="casos-uso.html">Casos de Uso</a>
+        <a href="diagrama-clases.html">Clases</a>
+        <a href="diagrama-er.html" class="active">ER</a>
+        <a href="diagrama-componentes.html">Componentes</a>
+        <a href="casos-prueba.html">Casos de Prueba</a>
+      </nav>
+      <button class="hamburger" aria-label="Abrir menú móvil">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="mobile-menu">
+      <div class="menu-section">
+        <h3>Menú</h3>
+        <a href="index.html">Inicio</a>
+         <a href="doc-api.html">API</a>
+        <a href="casos-uso.html">Casos de Uso</a>
+        <a href="diagrama-clases.html">Diagrama Clases</a>
+        <a href="diagrama-er.html" class="active">Diagrama ER</a>
+        <a href="diagrama-componentes.html">Componentes</a>
+        <a href="casos-prueba.html">Casos de Prueba</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="main-container">
+    <section class="section">
+      <h1>Diagrama Entidad-Relación (ER)</h1>
+      <p>
+        El Diagrama ER muestra las entidades, atributos y relaciones de la base de datos de TECOCINAMOS.
+        Incluye llaves primarias (PK), foráneas (FK) y listas de atributos.
+      </p>
+
+      <!-- Imagen del Diagrama -->
+      <div class="img-container">
+        <img src="assets/images/diagrama_er.png" alt="Diagrama Entidad-Relación" />
+      </div>
+
+      <h2>Entidades y Atributos</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Entidad</th>
+            <th>Atributos Principales</th>
+            <th>Relaciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>rol</strong></td>
+            <td>rol_id (PK), nombre_rol</td>
+            <td>1:N con <code>usuario.rol_id</code></td>
+          </tr>
+          <tr>
+            <td><strong>usuario</strong></td>
+            <td>
+              usuario_id (PK), rol_id (FK), nombre, email (UNIQUE),  
+              contrasena, telefono, direccion, eliminado, fecha_eliminado
+            </td>
+            <td>1:N con <code>pedido.usuario_id</code><br/>1:N con <code>log_auditoria.usuario_admin_id</code></td>
+          </tr>
+          <tr>
+            <td><strong>estado</strong></td>
+            <td>estado_id (PK), nombre_estado</td>
+            <td>1:N con <code>pedido.estado_id</code></td>
+          </tr>
+          <tr>
+            <td><strong>pedido</strong></td>
+            <td>
+              pedido_id (PK), usuario_id (FK), estado_id (FK),  
+              fecha_creado, fecha_entrega, direccion_entrega, fecha_actualizacion
+            </td>
+            <td>1:N con <code>detalles_pedido.pedido_id</code></td>
+          </tr>
+          <tr>
+            <td><strong>detalles_pedido</strong></td>
+            <td>
+              detalles_pedido_id (PK), pedido_id (FK),  
+              plato_id (FK), cantidad_plato, descuento
+            </td>
+            <td>N:1 con <code>pedido.pedido_id</code><br/>N:1 con <code>plato.plato_id</code></td>
+          </tr>
+          <tr>
+            <td><strong>categoria</strong></td>
+            <td>categoria_id (PK), nombre</td>
+            <td>1:N con <code>plato.categoria_id</code></td>
+          </tr>
+          <tr>
+            <td><strong>plato</strong></td>
+            <td>
+              plato_id (PK), nombre_plato, cantidad, precio, stock,  
+              preparacion_casa, recomendaciones, fecha_actualizacion,  
+              categoria_id (FK), image_base_name
+            </td>
+            <td>1:N con <code>plato_ingrediente.plato_id</code><br/>1:N con <code>detalles_pedido.plato_id</code></td>
+          </tr>
+          <tr>
+            <td><strong>plato_ingrediente</strong></td>
+            <td>
+              id (PK), plato_id (FK), ingrediente_id (FK),  
+              cantidad_usada, unidad
+            </td>
+            <td>N:1 con <code>plato.plato_id</code><br/>N:1 con <code>ingrediente.ingrediente_id</code></td>
+          </tr>
+          <tr>
+            <td><strong>ingrediente</strong></td>
+            <td>
+              ingrediente_id (PK), nombre, categoria, proveedor_id (FK),  
+              cantidad_envase, unidad_envase, precio_envase, precio_unitario,  
+              unidad, stock
+            </td>
+            <td>1:N con <code>plato_ingrediente.ingrediente_id</code><br/>1:N con <code>ingrediente_alergeno.ingrediente_id</code></td>
+          </tr>
+          <tr>
+            <td><strong>proveedor</strong></td>
+            <td>proveedor_id (PK), nombre, contacto, telefono, email</td>
+            <td>1:N con <code>ingrediente.proveedor_id</code></td>
+          </tr>
+          <tr>
+            <td><strong>alergenos</strong></td>
+            <td>alergeno_id (PK), nombre</td>
+            <td>1:N con <code>ingrediente_alergeno.alergeno_id</code></td>
+          </tr>
+          <tr>
+            <td><strong>ingrediente_alergeno</strong></td>
+            <td>id (PK), ingrediente_id (FK), alergeno_id (FK)</td>
+            <td>N:1 con <code>ingrediente.ingrediente_id</code><br/>N:1 con <code>alergenos.alergeno_id</code></td>
+          </tr>
+          <tr>
+            <td><strong>log_auditoria</strong></td>
+            <td>
+              log_id (PK), entidad, campo_modificado,  
+              valor_anterior, valor_nuevo, fecha, accion, usuario_admin_id (FK)
+            </td>
+            <td>N:1 con <code>usuario.usuario_id</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>
+      <p>© 2025 Teresa Charlo Millán | Diagrama ER</p>
+    </footer>
+  </div>
+
+  <script src="assets/js/scripts.js"></script>
+</body>
+</html>

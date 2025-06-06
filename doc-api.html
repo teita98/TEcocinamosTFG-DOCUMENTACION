@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TECOCINAMOS · Documentación</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <!-- ========== HEADER / NAVBAR ========== -->
+    <header>
+      <div class="nav-container">
+        <a href="index.html" class="logo">TECOCINAMOS</a>
+        <nav class="nav-links">
+          <a href="index.html">Inicio</a>
+          <a href="doc-api.html" class="active">API</a>
+          <a href="casos-uso.html">Casos de Uso</a>
+          <a href="diagrama-clases.html">Clases</a>
+          <a href="diagrama-er.html">ER</a>
+          <a href="diagrama-componentes.html">Componentes</a>
+          <a href="casos-prueba.html">Casos de Prueba</a>
+        </nav>
+        <button class="hamburger" aria-label="Abrir menú móvil">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+      <!-- Menú móvil -->
+      <div id="mobile-menu">
+        <div class="menu-section">
+          <h3>Menú</h3>
+          <a href="doc-api.html">Inicio</a>
+          <a href="doc-api.html" class="active">API</a>
+          <a href="casos-uso.html">Casos de Uso</a>
+          <a href="diagrama-clases.html">Diagrama Clases</a>
+          <a href="diagrama-er.html">Diagrama ER</a>
+          <a href="diagrama-componentes.html">Componentes</a>
+          <a href="casos-prueba.html">Casos de Prueba</a>
+        </div>
+      </div>
+    </header>
+
+   
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="main-container">
+      <section class="section">
+      <h1>DOCUMENTACIÓN API</h1>
+      <p>Guía completa para el uso de la API de nuestro servicio</p>
+    </section>
+
+ 
+
+    <!-- Tabla de Endpoints -->
+    <section class="section">
+
+      <h2>🔓 Autenticación y Seguridad (Spring Security)</h2>
+      <ul class="custom-list">
+        <li>
+          <strong>JWT + Stateless</strong>: Usamos JWT para proteger casi todas
+          las rutas. No hay sesiones en servidor.
+        </li>
+        <li>
+          El filtro <code>JwtAuthFilter</code> intercepta cada petición entrante
+          y valida el JWT antes de permitir acceso.
+        </li>
+        <li>
+          <strong>Rutas públicas</strong> (no necesitan token):
+          <ul class="custom-list">
+            <li><code>POST /api/v1/auth/register</code></li>
+            <li><code>POST /api/v1/auth/login</code></li>
+            <li><code>GET /api/v1/platos/**</code></li>
+            <li><code>GET /api/v1/categorias/**</code></li>
+            <li><code>GET /api/v1/alergenos/**</code></li>
+            <li><code>GET /api/v1/ingredientes/**</code></li>
+            <li><code>POST /api/v1/contact/**</code></li>
+          </ul>
+        </li>
+        <li>
+          Todas las demás rutas <strong>requieren</strong> un header:
+          <pre><code>Authorization: Bearer &lt;token_JWT&gt;</code></pre>
+        </li>
+        <li>
+          Dentro de las rutas autenticadas, algunos endpoints aceptan cualquier
+          rol autenticado (<code>CLIENTE</code> o <code>ADMIN</code>), y otros
+          están restringidos solo a <code>ADMIN</code>.
+        </li>
+      </ul>
+      <table>
+        <thead>
+          <tr>
+            <th>Autenticación (AuthController)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <details>
+                <summary class="post">
+                  POST /api/v1/auth/register – Registrar nuevo usuario (público)
+                </summary>
+                <br />
+
+                <pre><code>POST /api/v1/auth/register
+Content-Type: application/json</code></pre>
+                <br />
+
+                <p><strong>Body (JSON):</strong></p>
+                <pre><code>{
+  "nombre": "Juan Pérez",
+  "email": "juan@correo.com",
+  "password": "SecurePwd!23"
+}</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li>
+                    <strong>Descripción:</strong> Registra un usuario con rol
+                    <code>CLIENTE</code> por defecto. No requiere JWT.
+                  </li>
+                  <li>
+                    <strong>Validaciones</strong> (DTO
+                    <code>UsuarioRegisterDTO</code>):
+                    <ul class="custom-list">
+                      <li><code>nombre</code>: no puede estar vacío.</li>
+                      <li>
+                        <code>email</code>: debe tener formato válido y no estar
+                        ya registrado.
+                      </li>
+                      <li>
+                        <code>password</code>: mínimo 8 caracteres (u otras
+                        reglas definidas).
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <strong>Respuesta (201 Created):</strong>
+                    <pre><code>{
+  "id": 15,
+  "nombre": "Juan Pérez",
+  "email": "juan@correo.com",
+  "rol": "CLIENTE",
+  "fechaCreado": "2025-06-02"
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="post">
+                  POST /api/v1/auth/login – Obtener JWT (público)
+                </summary>
+                <br />
+
+                <pre><code>POST /api/v1/auth/login
+Content-Type: application/json</code></pre>
+                <br />
+
+                <p><strong>Body (JSON):</strong></p>
+                <pre><code>{
+  "email": "juan@correo.com",
+  "password": "SecurePwd!23"
+}</code></pre>
+                <br />
+
+                <ul class="custom-list">
+                  <li>
+                    <strong>Descripción:</strong> Autentica las credenciales y
+                    devuelve un token JWT.
+                  </li>
+                  <li>
+                    <strong>Respuesta (200 OK):</strong>
+                    <pre><code>{
+  "token": "eyJhbGciOiJIUzI1NiJ9…"
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table>
+        <thead>
+          <tr>
+            <th>Alérgenos (AlergenoController)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/alergenos – Listar todos los alérgenos (público)
+                </summary>
+                <br />
+
+                <pre><code>GET /api/v1/alergenos</code></pre>
+                <br />
+
+                <ul class="custom-list">
+                  <li>
+                    <strong>Descripción:</strong> Devuelve una lista de
+                    <code>AlergenoResponseDTO</code> con todos los alérgenos
+                    registrados.
+                  </li>
+                  <li><strong>No requiere token.</strong></li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>[
+  { "id": 1, "nombre": "GLUTEN" },
+  { "id": 2, "nombre": "LACTEOS" },
+  { "id": 4, "nombre": "HUEVO" },
+  { "id": 5, "nombre": "PESCADO" }
+]</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="post">
+                  POST /api/v1/alergenos?nombre=xxxx – Crear nuevo alérgeno
+                  (solo ADMIN)
+                </summary>
+                <br />
+
+                <pre><code>POST /api/v1/alergenos?nombre=PESCADO
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Crea un nuevo alérgeno,
+                    pasando el parámetro <code>nombre</code> por query string.
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (201 Created):</strong>
+                    <pre><code>{
+  "id": 9,
+  "nombre": "PESCADO"
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="delete">
+                  DELETE /api/v1/alergenos/{id} – Eliminar alérgeno (solo ADMIN)
+                </summary>
+                <br />
+
+                <pre><code>DELETE /api/v1/alergenos/5
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Elimina el alérgeno cuyo
+                    <code>id</code> = 5.
+                  </li>
+                  <li>
+                    <strong>Respuesta:</strong> <code>204 No Content</code>.
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table>
+        <thead>
+          <tr>
+            <th>Categorías (CategoriaController)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/categorias – Listar todas las categorías (público)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/categorias</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li>
+                    <strong>Descripción:</strong> Devuelve lista de
+                    <code>CategoriaResponseDTO</code> con todas las categorías
+                    de platos.
+                  </li>
+                  <li><strong>No requiere token.</strong></li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>[
+  { "id": 1, "nombreCategoria": "Entrantes" },
+  { "id": 2, "nombreCategoria": "Pescados" },
+  { "id": 3, "nombreCategoria": "Postres" }
+]</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="post">
+                  POST /api/v1/categorias – Crear categoría (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>POST /api/v1/categorias
+Authorization: Bearer &lt;token_admin&gt;
+Content-Type: application/json</code></pre>
+                <br />
+                <p><strong>Body (JSON):</strong></p>
+                <pre><code>{
+  "nombreCategoria": "Bebidas"
+}</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Validaciones</strong>
+                    (<code>CategoriaRequestDTO</code>):
+                    <ul class="custom-list">
+                      <li><code>nombreCategoria</code>: no vacío.</li>
+                    </ul>
+                  </li>
+                  <li>
+                    <strong>Respuesta (201 Created):</strong>
+                    <pre><code>{
+  "id": 4,
+  "nombreCategoria": "Bebidas"
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="put">
+                  PUT /api/v1/categorias/{id} – Actualizar categoría (solo
+                  ADMIN)
+                </summary>
+                <br />
+                <pre><code>PUT /api/v1/categorias/3
+Authorization: Bearer &lt;token_admin&gt;
+Content-Type: application/json</code></pre>
+                <br />
+                <p><strong>Body (JSON):</strong></p>
+                <pre><code>{
+  "nombreCategoria": "Postres Caseros"
+}</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Respuesta (200 OK):</strong>
+                    <pre><code>{
+  "id": 3,
+  "nombreCategoria": "Postres Caseros"
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="delete">
+                  DELETE /api/v1/categorias/{id} – Eliminar categoría (solo
+                  ADMIN)
+                </summary>
+                <br />
+                <pre><code>DELETE /api/v1/categorias/3
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Elimina la categoría con
+                    <code>id</code> = 3 (si hay platos asociados, se debe
+                    manejar cascada o fallará por integridad).
+                  </li>
+                  <li>
+                    <strong>Respuesta:</strong> <code>204 No Content</code>.
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+          <table>
+        <thead>
+          <tr>
+            <th>Proveedores (ProveedorController)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <details>
+                <summary class="post">
+                  POST /api/v1/proveedores – Crear proveedor (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>POST /api/v1/proveedores
+Authorization: Bearer &lt;token_admin&gt;
+Content-Type: application/json</code></pre>
+                <br />
+                <p><strong>Body (JSON):</strong></p>
+                <pre><code>{
+  "nombreProveedor": "Proveedor C",
+  "contacto": "+34-600-123-456"
+}</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Crea un nuevo proveedor.
+                  </li>
+                  <li>
+                    <strong>Respuesta (201 Created):</strong>
+                    <pre><code>{
+  "id": 3,
+  "nombreProveedor": "Proveedor C",
+  "contacto": "+34-600-123-456"
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/proveedores – Listar proveedores (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/proveedores
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Devuelve lista de todos los proveedores.
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>[
+  { "id": 1, "nombreProveedor": "Proveedor A", "contacto": "123-456-789" },
+  { "id": 2, "nombreProveedor": "Proveedor B", "contacto": "987-654-321" }
+]</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/proveedores/{id} – Obtener proveedor por ID (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/proveedores/1
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Devuelve los datos del proveedor cuyo <code>id</code> = 1.
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "id": 1,
+  "nombreProveedor": "Proveedor A",
+  "contacto": "123-456-789"
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="put">
+                  PUT /api/v1/proveedores/{id} – Actualizar proveedor (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>PUT /api/v1/proveedores/2
+Authorization: Bearer &lt;token_admin&gt;
+Content-Type: application/json</code></pre>
+                <br />
+                <p><strong>Body (JSON):</strong></p>
+                <pre><code>{
+  "nombreProveedor": "Proveedor B Actualizado",
+  "contacto": "+34-700-987-654"
+}</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Actualiza los datos del proveedor con <code>id</code> = 2.
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "id": 2,
+  "nombreProveedor": "Proveedor B Actualizado",
+  "contacto": "+34-700-987-654"
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="delete">
+                  DELETE /api/v1/proveedores/{id} – Eliminar proveedor (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>DELETE /api/v1/proveedores/2
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Elimina el proveedor con <code>id</code> = 2 (si hay ingredientes o platos asociados, primero deben eliminarse).
+                  </li>
+                  <li>
+                    <strong>Respuesta:</strong> <code>204 No Content</code>.
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class="tabla-ingredientes">
+        <thead>
+          <tr>
+            <th>Ingredientes (IngredientesController)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/ingredientes?page=&size= – Listar ingredientes (público)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/ingredientes?page=0&size=20</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li>
+                    <strong>Descripción:</strong> Devuelve un paginado de <code>IngredienteResponseDTO</code>. Cada entrada incluye:
+                    <ul class="custom-list">
+                      <li><code>id</code></li>
+                      <li><code>nombre</code></li>
+                      <li><code>categoria</code></li>
+                      <li><code>proveedor</code></li>
+                      <li><code>cantidadEnvase</code></li>
+                      <li><code>unidadEnvase</code></li>
+                      <li><code>precioEnvase</code></li>
+                      <li><code>precioUnitario</code></li>
+                      <li><code>unidad</code></li>
+                      <li><code>alergenos</code> (lista de <code>{ id, nombre }</code>)</li>
+                    </ul>
+                  </li>
+                  <li><strong>No requiere token.</strong></li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "content": [
+    {
+      "id":             10,
+      "nombre":         "Aceite de Oliva",
+      "categoria":      "Aceites",
+      "proveedor":      "Proveedor C",
+      "cantidadEnvase": 2000.00,
+      "unidadEnvase":   "ml",
+      "precioEnvase":   6.00,
+      "precioUnitario": 0.0030,
+      "unidad":         "ml",
+      "alergenos":      []
+    },
+    {
+      "id":             8,
+      "nombre":         "Azúcar",
+      "categoria":      "Condimentos",
+      "proveedor":      "Proveedor C",
+      "cantidadEnvase": 1000.00,
+      "unidadEnvase":   "gramos",
+      "precioEnvase":   1.00,
+      "precioUnitario": 0.0010,
+      "unidad":         "gramos",
+      "alergenos":      []
+    },
+    {
+      "id":             4,
+      "nombre":         "Bacalao Desalado",
+      "categoria":      "Pescados",
+      "proveedor":      "Proveedor C",
+      "cantidadEnvase": 1000.00,
+      "unidadEnvase":   "gramos",
+      "precioEnvase":   5.00,
+      "precioUnitario": 0.0050,
+      "unidad":         "gramos",
+      "alergenos": [
+        { "id": 5, "nombre": "PESCADO" }
+      ]
+    }
+    // … etc …
+  ],
+  "pageable":       { … },
+  "totalPages":     1,
+  "totalElements":  10,
+  "last":           true,
+  "size":           20,
+  "number":         0,
+  "sort":           { "sorted": true, "unsorted": false, "empty": false },
+  "numberOfElements": 10,
+  "first":           true,
+  "empty":           false
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/ingredientes/{id} – Obtener ingrediente por ID (público)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/ingredientes/4</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Descripción:</strong> Devuelve <code>IngredienteResponseDTO</code> para <code>id</code> = 4.</li>
+                  <li><strong>No requiere token.</strong></li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "id": 4,
+  "nombre": "Bacalao Desalado",
+  "categoria": "Pescados",
+  "proveedor": "Proveedor C",
+  "cantidadEnvase": 1000.0,
+  "unidadEnvase": "gramos",
+  "precioEnvase": 5.0,
+  "precioUnitario": 0.005,
+  "unidad": "gramos",
+  "alergenos": [{ "id": 5, "nombre": "PESCADO" }]
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/ingredientes/por-proveedor/{id}?page=&size= – Listar por proveedor (público)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/ingredientes/por-proveedor/3?page=0&size=20</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Descripción:</strong> Devuelve <code>Page&lt;IngredienteResponseDTO&gt;</code> de los ingredientes cuyo <code>proveedor_id</code> = 3.</li>
+                  <li><strong>No requiere token.</strong></li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "content": [
+    {
+      "id":             7,
+      "nombre":         "Lechuga",
+      "categoria":      "Verduras",
+      "proveedor":      "Proveedor A",
+      "cantidadEnvase": 1000.00,
+      "unidadEnvase":   "gramos",
+      "precioEnvase":   1.00,
+      "precioUnitario": 0.0010,
+      "unidad":         "gramos",
+      "alergenos":      []
+    },
+    {
+      "id":             5,
+      "nombre":         "Patata",
+      "categoria":      "Verduras",
+      "proveedor":      "Proveedor A",
+      "cantidadEnvase": 5000.00,
+      "unidadEnvase":   "gramos",
+      "precioEnvase":   2.50,
+      "precioUnitario": 0.0005,
+      "unidad":         "gramos",
+      "alergenos":      []
+    }
+  ],
+  "pageable":       { … },
+  "totalPages":     1,
+  "totalElements":  2,
+  "last":           true,
+  "size":           20,
+  "number":         0,
+  "sort":           { "sorted": true, "unsorted": false, "empty": false },
+  "numberOfElements": 2,
+  "first":           true,
+  "empty":           false
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/ingredientes/{id}/alergenos – Obtener alérgenos de un ingrediente (público)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/ingredientes/4/alergenos</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Descripción:</strong> Recupera la lista de <code>AlergenoResponseDTO</code> asociados al ingrediente con <code>id</code> = 4.</li>
+                  <li><strong>No requiere token.</strong></li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>[{ "id": 5, "nombre": "PESCADO" }]</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="post">
+                  POST /api/v1/ingredientes/{ingredienteId}/alergenos/{alergenoId} – Añadir alérgeno a ingrediente (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>POST /api/v1/ingredientes/4/alergenos/2
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Asocia el alérgeno <code>alergenoId</code> = 2 al ingrediente <code>ingredienteId</code> = 4.
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "id":       4,
+  "nombre":   "Bacalao Seco",
+  "categoria": "Pescados",
+  "proveedor": "Proveedor C",
+  "cantidadEnvase": 1200.0,
+  "unidadEnvase":   "gramos",
+  "precioEnvase":   6.0,
+  "precioUnitario": 0.005,
+  "unidad":         "gramos",
+  "alergenos": [
+    { "id": 2, "nombre": "LACTEOS" },
+    { "id": 5, "nombre": "PESCADO" }
+  ]
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="put">
+                  PUT /api/v1/ingredientes/{id} – Actualizar ingrediente (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>PUT /api/v1/ingredientes/4
+Authorization: Bearer &lt;token_admin&gt;
+Content-Type: application/json</code></pre>
+                <br />
+                <p><strong>Body (JSON):</strong></p>
+                <pre><code>{
+  "nombre":         "Bacalao Seco",
+  "categoria":      "Pescados",
+  "proveedorId":    3,
+  "cantidadEnvase": 1200.0,
+  "unidadEnvase":   "gramos",
+  "precioEnvase":   6.0,
+  "unidad":         "gramos",
+  "alergenosIds":   [5]
+}</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li><strong>Flujo Interno:</strong>
+                    <ol>
+                      <li>Valida que el <code>Ingrediente</code> con <code>id</code> = 4 exista (o lanza 404).</li>
+                      <li>Valida que <code>Proveedor</code> con <code>proveedorId</code> exista.</li>
+                      <li>Actualiza campos básicos y vuelve a calcular <code>precioUnitario = precioEnvase / cantidadEnvase</code>.</li>
+                      <li>Borra todas las filas antiguas de <code>ingrediente_alergeno</code> para dicho <code>ingredienteId</code>.</li>
+                      <li>Por cada <code>idAler</code> en <code>alergenosIds</code>, valida que el alérgeno exista y crea una fila en <code>ingrediente_alergeno</code>.</li>
+                      <li>Devuelve el <code>IngredienteResponseDTO</code> completo, con la lista actualizada de alérgenos.</li>
+                    </ol>
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "id":       4,
+  "nombre":   "Bacalao Seco",
+  "categoria": "Pescados",
+  "proveedor": "Proveedor C",
+  "cantidadEnvase": 1200.0,
+  "unidadEnvase":   "gramos",
+  "precioEnvase":   6.0,
+  "precioUnitario": 0.005,
+  "unidad":         "gramos",
+  "alergenos": [{ "id": 5, "nombre": "PESCADO" }]
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="delete">
+                  DELETE /api/v1/ingredientes/{id} – Eliminar ingrediente (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>DELETE /api/v1/ingredientes/4
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Elimina el ingrediente con <code>id</code> = 4; las filas en la tabla <code>ingrediente_alergeno</code> se borran en cascada.
+                  </li>
+                  <li>
+                    <strong>Respuesta:</strong> <code>204 No Content</code>.
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Platos (PlatoController)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/platos?page=&size= – Listar todos los platos (público)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/platos?page=0&size=20</code></pre>
+                <br />
+                <p><strong>Descripción:</strong> Devuelve un <code>Page&lt;PlatoListDTO&gt;</code> paginado, ordenado por <code>nombrePlato</code>. Cada <code>PlatoListDTO</code> incluye:
+                  <ul class="custom-list">
+                    <li><code>id</code></li>
+                    <li><code>nombrePlato</code></li>
+                    <li><code>descripcion</code></li>
+                    <li><code>categoria</code> (objeto con <code>{ id, nombreCategoria }</code>)</li>
+                    <li><code>precio</code></li>
+                    <li><code>stock</code></li>
+                    <li><code>imagenUrl</code> (si existe)</li>
+                  </ul>
+                </p>
+                <p><strong>No requiere token.</strong></p>
+                <p><strong>Ejemplo de respuesta (200 OK):</strong></p>
+                <pre>
+                  <code>{
+                            "content": [
+                            
+                              {
+                                "id":           4,
+                                "nombrePlato":  "Tarta de Queso",
+                                "descripcion":  "Tarta cremosa de queso",
+                                "categoria":    { "id": 3, "nombreCategoria": "Postres" },
+                                "precio":       4.50,
+                                "stock":        20,
+                                "imagenUrl":    "http://…/tarta.jpg"
+                              }
+                              // … etc …
+                            ],
+                            "pageable":       { … },
+                            "totalPages":     1,
+                            "totalElements":  2,
+                            "last":           true,
+                            "size":           20,
+                            "number":         0,
+                            "sort":           { "sorted": true, "unsorted": false, "empty": false },
+                            "numberOfElements": 2,
+                            "first":           true,
+                            "empty":           false
+                }</code>
+              </pre>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/platos/{id} – Obtener plato por ID (público)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/platos/2</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Descripción:</strong> Devuelve un <code>PlatoResponseDTO</code> con todos los detalles del plato <code>id</code> = 2.</li>
+                  <li><strong>No requiere token.</strong></li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "id": 2,
+  "nombrePlato": "Paella Valenciana",
+  "descripcion": "Paella con mariscos y pollo",
+  "categoria": { "id": 1, "nombreCategoria": "Entrantes" },
+  "precio": 12.0,
+  "stock": 10,
+  "imagenUrl": "http://…/paella.jpg"
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/platos/categoria?nombre=&page=&size= – Buscar platos por categoría (público)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/platos/categoria?nombre=Pescados&page=0&size=20</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Descripción:</strong> Busca platos cuyo nombre de categoría contenga “Pescados” (o exacto), devuelve <code>Page&lt;PlatoListDTO&gt;</code>.</li>
+                  <li><strong>No requiere token.</strong></li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "content": [
+    {
+      "id":           4,
+      "nombrePlato":  "Bacalao al Horno",
+      "descripcion":  "Bacalao con patatas y cebolla",
+      "categoria":    { "id": 2, "nombreCategoria": "Pescados" },
+      "precio":       10.00,
+      "stock":        15,
+      "imagenUrl":    null
+    }
+    // … etc …
+  ],
+  "pageable":       { … },
+  "totalPages":     1,
+  "totalElements":  1,
+  "last":           true,
+  "size":           20,
+  "number":         0,
+  "sort":           { "sorted": true, "unsorted": false, "empty": false },
+  "numberOfElements": 1,
+  "first":           true,
+  "empty":           false
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/platos/buscar?nombre=&page=&size= – Buscar platos por nombre (público)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/platos/buscar?nombre=Paella&page=0&size=20</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Descripción:</strong> Busca platos cuyo <code>nombrePlato</code> contenga “Paella”. Devuelve <code>Page&lt;PlatoListDTO&gt;</code>.</li>
+                  <li><strong>No requiere token.</strong></li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "content": [
+    {
+      "id":           2,
+      "nombrePlato":  "Paella Valenciana",
+      "descripcion":  "Paella con mariscos y pollo",
+      "categoria":    { "id": 1, "nombreCategoria": "Entrantes" },
+      "precio":       12.00,
+      "stock":        10,
+      "imagenUrl":    "http://…/paella.jpg"
+    }
+  ],
+  "pageable":       { … },
+  "totalPages":     1,
+  "totalElements":  1,
+  "last":           true,
+  "size":           20,
+  "number":         0,
+  "sort":           { "sorted": true, "unsorted": false, "empty": false },
+  "numberOfElements": 1,
+  "first":           true,
+  "empty":           false
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/platos/{id}/ingredientes – Obtener lista de ingredientes de un plato (público)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/platos/2/ingredientes</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Descripción:</strong> Devuelve un <code>List&lt;IngredienteDetalleDTO&gt;</code> con detalle de ingredientes requeridos para preparar el plato <code>id</code> = 2.</li>
+                  <li><strong>No requiere token.</strong></li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>[
+  {
+    "ingredienteId":     4,
+    "nombre":            "Bacalao Desalado",
+    "cantidadRequerida": 200,
+    "unidad":            "g"
+  },
+  {
+    "ingredienteId":     8,
+    "nombre":            "Azúcar",
+    "cantidadRequerida": 50,
+    "unidad":            "g"
+  }
+  // … etc …
+]</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/platos/{id}/alergenos – Obtener lista deduplicada de alérgenos de un plato (público)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/platos/2/alergenos</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Descripción:</strong> Devuelve un <code>List&lt;AlergenoResponseDTO&gt;</code> con los alérgenos que aparecen en <strong>cualquiera</strong> de los ingredientes del plato <code>id</code> = 2.</li>
+                  <li><strong>No requiere token.</strong></li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>[
+  { "id": 1, "nombre": "GLUTEN" },
+  { "id": 4, "nombre": "HUEVO" }
+]</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="post">
+                  POST /api/v1/platos – Crear nuevo plato (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>POST /api/v1/platos
+Authorization: Bearer &lt;token_admin&gt;
+Content-Type: application/json</code></pre>
+                <br />
+                <p><strong>Body (JSON):</strong></p>
+                <pre><code>{
+  "nombrePlato":     "Nueva receta",
+  "descripcion":     "Descripción del plato",
+  "categoriaId":     2,
+  "precio":          8.5,
+  "stock":           30,
+  "imagenUrl":       "http://…/nuevaplatillo.jpg"
+}</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li><strong>Validaciones</strong> (<code>PlatoRequestDTO</code>):
+                    <ul class="custom-list">
+                      <li><code>nombrePlato</code>, <code>descripcion</code>: no vacíos.</li>
+                      <li><code>categoriaId</code>: debe existir.</li>
+                      <li><code>precio</code> &gt; 0.</li>
+                      <li><code>stock</code> ≥ 0.</li>
+                    </ul>
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (201 Created):</strong>
+                    <pre><code>{
+  "id":           10,
+  "nombrePlato":  "Nueva receta",
+  "descripcion":  "Descripción del plato",
+  "categoria":    { "id": 2, "nombreCategoria": "Pescados" },
+  "precio":       8.5,
+  "stock":        30,
+  "imagenUrl":    "http://…/nuevaplatillo.jpg"
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="put">
+                  PUT /api/v1/platos/{id} – Actualizar plato (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>PUT /api/v1/platos/2
+Authorization: Bearer &lt;token_admin&gt;
+Content-Type: application/json</code></pre>
+                <br />
+                <p><strong>Body (JSON):</strong></p>
+                <pre><code>{
+  "nombrePlato":  "Paella Mixta",
+  "descripcion":  "Paella con mariscos, pollo y conejo",
+  "categoriaId":  1,
+  "precio":       13.0,
+  "stock":        8,
+  "imagenUrl":    "http://…/paellamixta.jpg"
+}</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "id":           2,
+  "nombrePlato":  "Paella Mixta",
+  "descripcion":  "Paella con mariscos, pollo y conejo",
+  "categoria":    { "id": 1, "nombreCategoria": "Entrantes" },
+  "precio":       13.0,
+  "stock":        8,
+  "imagenUrl":    "http://…/paellamixta.jpg"
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="delete">
+                  DELETE /api/v1/platos/{id} – Eliminar plato (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>DELETE /api/v1/platos/2
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Elimina el plato con <code>id</code> = 2 (si hay registros en otras tablas que lo referencien, gestionarla vía cascada o fallará).
+                  </li>
+                  <li>
+                    <strong>Respuesta:</strong> <code>204 No Content</code>.
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Estados de Pedido (EstadoController)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/estados – Listar todos los estados (CLIENTE o ADMIN)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/estados
+Authorization: Bearer &lt;token_cliente_o_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>CLIENTE</code>, <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Devuelve lista de <code>EstadoResponseDTO</code> (p.ej.: Pendiente, Enviado, Entregado, Cancelado).
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>[
+  { "id": 1, "nombre": "Pendiente" },
+  { "id": 2, "nombre": "Enviado" },
+  { "id": 3, "nombre": "Entregado" },
+  { "id": 4, "nombre": "Cancelado" }
+]</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="post">
+                  POST /api/v1/estados – Crear estado (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>POST /api/v1/estados
+Authorization: Bearer &lt;token_admin&gt;
+Content-Type: application/json</code></pre>
+                <br />
+                <p><strong>Body (JSON):</strong></p>
+                <pre><code>{
+  "nombre": "Preparando"
+}</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Ejemplo de respuesta (201 Created):</strong>
+                    <pre><code>{
+  "id": 5,
+  "nombre": "Preparando"
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="delete">
+                  DELETE /api/v1/estados/{id} – Eliminar estado (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>DELETE /api/v1/estados/4
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Elimina el estado con <code>id</code> = 4. Si hay pedidos asociados, arroja error de integridad.
+                  </li>
+                  <li>
+                    <strong>Respuesta:</strong> <code>204 No Content</code>.
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Pedidos (PedidoController)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <details>
+                <summary class="post">
+                  POST /api/v1/pedidos – Crear nuevo pedido (CLIENTE o ADMIN)
+                </summary>
+                <br />
+                <pre><code>POST /api/v1/pedidos
+Authorization: Bearer &lt;token_cliente_o_admin&gt;
+Content-Type: application/json</code></pre>
+                <br />
+                <p><strong>Body (JSON):</strong></p>
+                <pre><code>{
+  "fechaEntrega":     "2025-06-05",
+  "direccionEntrega": "Av Siempre Viva 742",
+  "detalles": [
+    {
+      "platoId":       2,
+      "cantidadPlato": 5,
+      "descuento":     0.0
+    },
+    {
+      "platoId":       4,
+      "cantidadPlato": 2,
+      "descuento":     0.0
+    }
+  ]
+}</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>CLIENTE</code>, <code>ADMIN</code></li>
+                  <li><strong>Descripción (flujo):</strong>
+                    <ol>
+                      <li>Se obtiene el usuario autenticado del JWT y el estado “Pendiente”.</li>
+                      <li>Se crea la cabecera <code>Pedido</code> con <code>total = 0</code>.</li>
+                      <li>Por cada <code>DetallesPedidoDTO</code>:
+                        <ul class="custom-list">
+                          <li>Valida existencia de <code>Plato</code> y stock suficiente.</li>
+                          <li>Resta el stock y guarda el cambio en <code>plato.stock</code>.</li>
+                          <li>Calcula <code>subtotalLínea = precioUnitario × cantidadPlato – descuento</code>.</li>
+                          <li>Suma <code>subtotalLínea</code> al acumulado <code>total</code>.</li>
+                          <li>Inserta registro en <code>detalles_pedido</code>.</li>
+                        </ul>
+                      </li>
+                      <li>Actualiza el campo <code>total</code> del pedido en la base de datos.</li>
+                      <li>Recarga el pedido con sus detalles (<code>pedidoService.crearPedido(…)</code> devuelve el <code>PedidoResponseDTO</code>).</li>
+                      <li>Genera PDF con iText y obtiene <code>byte[] pdfBytes</code>.</li>
+                      <li>Envía correo al cliente con PDF adjunto.</li>
+                      <li>Devuelve <code>PedidoResponseDTO</code> completo.</li>
+                    </ol>
+                  </li>
+                  <li><strong>Validaciones</strong> (<code>PedidoRequestDTO</code>):
+                    <ul class="custom-list">
+                      <li><code>fechaEntrega</code> ≥ fecha actual.</li>
+                      <li><code>direccionEntrega</code>: no vacía.</li>
+                      <li><code>detalles</code> ≥ 1 elemento.</li>
+                      <li>Cada <code>detalle</code>: <code>cantidadPlato</code> ≥ 1, <code>descuento</code> ≥ 0.</li>
+                      <li>Stock insuficiente → <code>400 Bad Request</code>.</li>
+                    </ul>
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (201 Created):</strong>
+                    <pre><code>{
+  "id":               6,
+  "estado":           "Pendiente",
+  "nombreCliente":    "EmiOP",
+  "emailCliente":     "eordunap@hotmail.com",
+  "fechaCreado":      "2025-06-02",
+  "fechaEntrega":     "2025-06-05",
+  "direccionEntrega": "Av Siempre Viva 742",
+  "total":            69.0,
+  "fechaActualizacion":"2025-06-02T21:24:32.2077845",
+  "detalles": [
+    { "platoId": 2, "cantidadPlato": 5, "descuento": 0.0 },
+    { "platoId": 4, "cantidadPlato": 2, "descuento": 0.0 }
+  ]
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/pedidos/usuario – Listar los pedidos del usuario autenticado (CLIENTE o ADMIN)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/pedidos/usuario
+Authorization: Bearer &lt;token_cliente_o_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>CLIENTE</code>, <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Devuelve un <code>List&lt;PedidoListDTO&gt;</code> (sin detalle de líneas) con los pedidos del usuario autenticado.
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>[
+  {
+    "id":           4,
+    "nombreCliente":"EmiOP",
+    "estado":       "Entregado",
+    "fechaEntrega": "2025-05-28",
+    "totalPlatos":  3,
+    "total":        37.5
+  },
+  {
+    "id":           6,
+    "nombreCliente":"EmiOP",
+    "estado":       "Pendiente",
+    "fechaEntrega": "2025-06-05",
+    "totalPlatos":  7,
+    "total":        69.0
+  }
+]</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/pedidos?page=&size=&estadoId= – Listar todos los pedidos (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/pedidos?page=0&size=10&estadoId=2
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Devuelve un paginado (<code>Page&lt;PedidoListDTO&gt;</code>) de todos los pedidos. Opcionalmente filtra por <code>estadoId</code>.
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "content": [
+    {
+      "id":            8,
+      "nombreCliente":"María López",
+      "estado":        "Enviado",
+      "fechaEntrega":  "2025-06-03",
+      "totalPlatos":   4,
+      "total":         45.00
+    }
+    // … etc …
+  ],
+  "pageable":       { … },
+  "totalPages":     5,
+  "totalElements":  45,
+  "last":           false,
+  "size":           10,
+  "number":         0,
+  "sort":           { "sorted": true, "unsorted": false, "empty": false },
+  "numberOfElements": 10,
+  "first":           true,
+  "empty":           false
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/pedidos/{id} – Obtener pedido por ID (CLIENTE o ADMIN)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/pedidos/6
+Authorization: Bearer &lt;token_cliente_o_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong>
+                    <ul class="custom-list">
+                      <li><code>ADMIN</code> (puede ver cualquier pedido).</li>
+                      <li><code>CLIENTE</code> (solo si el pedido le pertenece).</li>
+                    </ul>
+                  </li>
+                  <li>
+                    <strong>Descripción:</strong> Devuelve <code>PedidoResponseDTO</code> completo, con detalle de líneas y todos los campos.
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "id":               6,
+  "estado":           "Pendiente",
+  "nombreCliente":    "EmiOP",
+  "emailCliente":     "eordunap@hotmail.com",
+  "fechaCreado":      "2025-06-02",
+  "fechaEntrega":     "2025-06-05",
+  "direccionEntrega": "Av Siempre Viva 742",
+  "total":            69.0,
+  "fechaActualizacion":"2025-06-02T21:24:32.2077845",
+  "detalles": [
+    { "platoId": 2, "cantidadPlato": 5, "descuento": 0.0 },
+    { "platoId": 4, "cantidadPlato": 2, "descuento": 0.0 }
+  ]
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="delete">
+                  DELETE /api/v1/pedidos/{id} – Cancelar o eliminar pedido (CLIENTE o ADMIN)
+                </summary>
+                <br />
+                <pre><code>DELETE /api/v1/pedidos/6
+Authorization: Bearer &lt;token_cliente_o_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Si el usuario autenticado es <code>CLIENTE</code>:</strong>
+                    <ul class="custom-list">
+                      <li>Solo puede cancelar su propio pedido si <code>estado = “Pendiente”</code>.</li>
+                      <li>Se actualiza estado a “Cancelado” y se restaura stock de cada plato.</li>
+                      <li>Devuelve <code>204 No Content</code>.</li>
+                    </ul>
+                  </li>
+                  <li><strong>Si el usuario autenticado es <code>ADMIN</code>:</strong>
+                    <ul class="custom-list">
+                      <li>Restaura stock de todas las líneas del pedido.</li>
+                      <li>Borra físicamente el pedido y sus detalles (orphanRemoval = true).</li>
+                      <li>Devuelve <code>204 No Content</code>.</li>
+                    </ul>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="put">
+                  PUT /api/v1/pedidos/{id}/estado/{estadoId} – Cambiar estado de pedido (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>PUT /api/v1/pedidos/6/estado/3
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Actualiza el estado del pedido con <code>id</code> = 6 al <code>estadoId</code> = 3 (“Entregado”). Internamente registra un log de auditoría.
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "id":               6,
+  "estado":           "Entregado",
+  "nombreCliente":    "EmiOP",
+  "emailCliente":     "eordunap@hotmail.com",
+  "fechaCreado":      "2025-06-02",
+  "fechaEntrega":     "2025-06-05",
+  "direccionEntrega": "Av Siempre Viva 742",
+  "total":            69.0,
+  "fechaActualizacion":"2025-06-03T11:12:45.123",
+  "detalles": [
+    { "platoId": 2, "cantidadPlato": 5, "descuento": 0.0 },
+    { "platoId": 4, "cantidadPlato": 2, "descuento": 0.0 }
+  ]
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Facturas (FacturaController)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/facturas/{pedidoId} – Descargar factura en PDF (CLIENTE o ADMIN)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/facturas/6
+Authorization: Bearer &lt;token_cliente_o_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong>
+                    <ul class="custom-list">
+                      <li><code>ADMIN</code> (puede descargar factura de cualquier pedido).</li>
+                      <li><code>CLIENTE</code> (solo si el pedido le pertenece).</li>
+                    </ul>
+                  </li>
+                  <li><strong>Descripción:</strong>
+                    <ol>
+                      <li>Busca el pedido <code>pedidoId</code> en BD. Si no existe, devuelve <code>404 Not Found</code>.</li>
+                      <li>Genera un PDF en memoria con iText. El PDF contiene:
+                        <ul class="custom-list">
+                          <li>Título (centrado, “Factura – Tecocinamos”).</li>
+                          <li>Tabla con datos generales: ID de factura, fecha pedido, fecha entrega, nombre cliente, email, teléfono, dirección de entrega.</li>
+                          <li>Tabla con líneas de pedido (Producto, Cant., Precio Unit., Descuento, Total Línea). Si no hay líneas, muestra “No hay productos en este pedido”.</li>
+                          <li>Total final (alineado a la derecha).</li>
+                          <li>Pie de página (centrado, “Gracias por confiar en Tecocinamos. ¡Esperamos verte pronto!”).</li>
+                        </ul>
+                      </li>
+                      <li>Devuelve el PDF con:
+                        <pre><code>Content-Type: application/pdf
+Content-Disposition: inline; filename="factura_pedido_6.pdf"</code></pre>
+                      </li>
+                      <li>Si el cliente lo abre en navegador, se muestra incrustado; si lo descarga, recibe el archivo <code>factura_pedido_6.pdf</code>.</li>
+                    </ol>
+                  </li>
+                  <li><strong>Respuesta (200 OK):</strong> El <strong>cuerpo</strong> es el binario del PDF. No hay JSON.</li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Estadísticas (EstadisticaController)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <p><em>Nota: La clase <code>EstadisticaController</code> está anotada con <code>@PreAuthorize("hasRole('ADMIN')")</code> a nivel de controlador, por lo que <strong>todos</strong> sus endpoints requieren <code>ADMIN</code>.</em></p>
+              <details>
+                <summary class="get">
+                  GET /api/v1/estadisticas/top-platos?topN={n} – Top N platos vendidos (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/estadisticas/top-platos?topN=5
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Devuelve un <code>List&lt;Map&lt;String,Object&gt;&gt;</code> donde cada elemento es <code>{ "nombrePlato": "...", "cantidadVendida": 123 }</code>, ordenados de mayor a menor ventas.
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>[
+  { "nombrePlato": "Paella Valenciana", "cantidadVendida": 150 },
+  { "nombrePlato": "Tarta de Queso",    "cantidadVendida": 120 }
+  // … hasta topN elementos …
+]</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/estadisticas/ingresos?desde=&hasta= – Ingresos por período (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/estadisticas/ingresos?desde=2025-01-01&hasta=2025-06-01
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Calcula el total de ingresos sumando <code>pedido.total</code> para pedidos cuya <code>fechaCreado</code> esté en el rango <code>[desde, hasta]</code>.
+                    <ul class="custom-list">
+                      <li>Si la fecha no tiene formato <code>YYYY-MM-DD</code>, devuelve <code>400 Bad Request</code> con <code>{ "error": "Formato de fecha inválido. Use YYYY-MM-DD" }</code>.</li>
+                    </ul>
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "ingresos": 2450.75,
+  "desde":    "2025-01-01",
+  "hasta":    "2025-06-01"
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/estadisticas/pedidos-por-estado – Pedidos agrupados por estado (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/estadisticas/pedidos-por-estado
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Devuelve un <code>List&lt;Map&lt;String,Object&gt;&gt;</code> donde cada elemento es <code>{ "estado": "Pendiente", "cantidad": 25 }</code> para cada estado existente.
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>[
+  { "estado": "Pendiente",  "cantidad": 5   },
+  { "estado": "Enviado",    "cantidad": 10  },
+  { "estado": "Entregado",  "cantidad": 100 },
+  { "estado": "Cancelado",  "cantidad": 2   }
+]</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Log Auditoría (LogAuditoriaController)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <p><em>Nota: El controller está anotado con <code>@PreAuthorize("hasRole('ADMIN')")</code>, por lo que <strong>solo ADMIN</strong> puede acceder.</em></p>
+              <details>
+                <summary class="get">
+                  GET /api/v1/logs – Listar todos los logs de auditoría (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/logs
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Devuelve un <code>List&lt;LogAuditoriaDTO&gt;</code>, donde cada DTO incluye:
+                    <ul class="custom-list">
+                      <li><code>id</code></li>
+                      <li><code>entidad</code> (p.ej., “Pedido”, “Usuario”)</li>
+                      <li><code>campo</code> (p.ej., “estado”, “email”)</li>
+                      <li><code>valorAnterior</code></li>
+                      <li><code>valorNuevo</code></li>
+                      <li><code>operacion</code> (p.ej., “Cambio de estado”, “Edición de usuario”)</li>
+                      <li><code>timestamp</code></li>
+                      <li><code>usuario</code> (email del admin que ejecutó la operación)</li>
+                    </ul>
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>[
+  {
+    "id": 15,
+    "entidad":          "Pedido",
+    "campo":            "estado",
+    "valorAnterior":    "Pendiente",
+    "valorNuevo":       "Entregado",
+    "operacion":        "Cambio de estado",
+    "timestamp":        "2025-06-01T18:22:10",
+    "usuario":          "admin@tecocinamos.com"
+  },
+  {
+    "id": 14,
+    "entidad":          "Usuario",
+    "campo":            "email",
+    "valorAnterior":    "pepito@correo.com",
+    "valorNuevo":       "pepitojp@correo.com",
+    "operacion":        "Edición de usuario",
+    "timestamp":        "2025-05-30T11:05:45",
+    "usuario":          "admin@tecocinamos.com"
+  }
+  // … etc …
+]</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Usuarios Públicos y Perfil (UsuarioController)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/users/me – Perfil del usuario autenticado (CLIENTE o ADMIN)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/users/me
+Authorization: Bearer &lt;token_cliente_o_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>CLIENTE</code>, <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Devuelve <code>UsuarioResponseDTO</code> con los datos del usuario autenticado (nombre, email, rol, fechaCreado, teléfono, etc.).
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "id":           5,
+  "nombre":       "EmiOP",
+  "email":        "eordunap@hotmail.com",
+  "rol":          "CLIENTE",
+  "fechaCreado":  "2025-05-30",
+  "telefono":     "+34-123-456-789"
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="put">
+                  PUT /api/v1/users/password – Cambiar contraseña (CLIENTE o ADMIN)
+                </summary>
+                <br />
+                <pre><code>PUT /api/v1/users/password
+Authorization: Bearer &lt;token_cliente_o_admin&gt;
+Content-Type: application/json</code></pre>
+                <br />
+                <p><strong>Body (JSON) <code>CambiarPasswordDTO</code>:</strong></p>
+                <pre><code>{
+  "passwordActual": "OldPass123!",
+  "nuevoPassword":  "NewPass456!"
+}</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>CLIENTE</code>, <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong>
+                    <ul class="custom-list">
+                      <li>Verifica que <code>passwordActual</code> coincida con la contraseña almacenada (BCrypt).</li>
+                      <li>Si coincide, actualiza al <code>nuevoPassword</code> (hash BCrypt).</li>
+                      <li>Devuelve <code>204 No Content</code>.</li>
+                    </ul>
+                  </li>
+                  <li><strong>Respuesta:</strong> <code>204 No Content</code>.</li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="put">
+                  PUT /api/v1/users/perfil – Actualizar nombre y teléfono (CLIENTE o ADMIN)
+                </summary>
+                <br />
+                <pre><code>PUT /api/v1/users/perfil
+Authorization: Bearer &lt;token_cliente_o_admin&gt;
+Content-Type: application/json</code></pre>
+                <br />
+                <p><strong>Body (JSON) <code>ActualizarPerfilDTO</code>:</strong></p>
+                <pre><code>{
+  "nombre":   "Emilio OP",
+  "telefono": "+34-987-654-321"
+}</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>CLIENTE</code>, <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Actualiza los datos del perfil (nombre y teléfono) del usuario autenticado.
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "id":          5,
+  "nombre":      "Emilio OP",
+  "email":       "eordunap@hotmail.com",
+  "rol":         "CLIENTE",
+  "fechaCreado": "2025-05-30",
+  "telefono":    "+34-987-654-321"
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/users/profile/{nombre} – Ver perfil público de un usuario (público)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/users/profile/EmiOP</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li>
+                    <strong>Descripción:</strong> Busca el usuario por <code>nombre</code> (username/nombre único) y devuelve <code>UsuarioPublicDTO</code>, que suele incluir solo campos públicos (p.ej., <code>nombre</code>, <code>telefono</code>). No revela email ni datos sensibles.
+                  </li>
+                  <li><strong>No requiere token.</strong></li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "nombre":   "EmiOP",
+  "telefono": "+34-123-456-789"
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/users/search?name={nombre} – Buscar usuarios por nombre (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/users/search?name=Juan
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Devuelve un <code>List&lt;UsuarioResponseDTO&gt;</code> de usuarios cuyo nombre coincida parcial o totalmente con el parámetro <code>name</code>.
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>[
+  {
+    "id":          12,
+    "nombre":      "Juan Pérez",
+    "email":       "juan@correo.com",
+    "rol":         "CLIENTE",
+    "fechaCreado": "2025-05-20",
+    "telefono":    "+34-600-111-222"
+  }
+  // … otros usuarios …
+]</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/users – Listar todos los usuarios (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/users
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Devuelve lista de <code>UsuarioResponseDTO</code> con todos los usuarios.
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>[
+  {
+    "id":           5,
+    "nombre":       "EmiOP",
+    "email":        "eordunap@hotmail.com",
+    "rol":          "CLIENTE",
+    "fechaCreado":  "2025-05-30",
+    "telefono":     "+34-123-456-789"
+  },
+  {
+    "id":           12,
+    "nombre":       "Juan Pérez",
+    "email":        "juan@correo.com",
+    "rol":          "CLIENTE",
+    "fechaCreado":  "2025-05-20",
+    "telefono":     "+34-600-111-222"
+  }
+  // … etc …
+]</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="get">
+                  GET /api/v1/users/{id} – Obtener usuario por ID (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>GET /api/v1/users/12
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Devuelve <code>UsuarioResponseDTO</code> con todos los datos del usuario <code>id</code> = 12.
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "id":           12,
+  "nombre":       "Juan Pérez",
+  "email":        "juan@correo.com",
+  "rol":          "CLIENTE",
+  "fechaCreado":  "2025-05-20",
+  "telefono":     "+34-600-111-222"
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="delete">
+                  DELETE /api/v1/users/{id} – Eliminar usuario (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>DELETE /api/v1/users/12
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> “Elimina lógicamente” al usuario con <code>id</code> = 12 (soft delete o marca <code>eliminado = true</code>).
+                  </li>
+                  <li>
+                    <strong>Respuesta:</strong> <code>204 No Content</code>.
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <details>
+                <summary class="put">
+                  PUT /api/v1/users/{id}/rol/{rolId} – Asignar rol a usuario (solo ADMIN)
+                </summary>
+                <br />
+                <pre><code>PUT /api/v1/users/12/rol/1
+Authorization: Bearer &lt;token_admin&gt;</code></pre>
+                <br />
+                <ul class="custom-list">
+                  <li><strong>Roles permitidos:</strong> <code>ADMIN</code></li>
+                  <li>
+                    <strong>Descripción:</strong> Asigna el rol de <code>rolId</code> = 1 (<code>ADMIN</code>) al usuario con <code>id</code> = 12.
+                  </li>
+                  <li>
+                    <strong>Ejemplo de respuesta (200 OK):</strong>
+                    <pre><code>{
+  "id":           12,
+  "nombre":       "Juan Pérez",
+  "email":        "juan@correo.com",
+  "rol":          "ADMIN",
+  "fechaCreado":  "2025-05-20",
+  "telefono":     "+34-600-111-222"
+}</code></pre>
+                  </li>
+                </ul>
+              </details>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </section>
+
+    <!-- Footer corto -->
+    <footer>
+      <p>© 2025 Teresa Charlo Millán | DAM 2024–2025</p>
+    </footer>
+    </div>
+
+    <script src="assets/js/scripts.js"></script>
+  </body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TECOCINAMOS · Diagrama de Clases</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <!-- HEADER / NAVBAR -->
+    <header>
+      <div class="nav-container">
+        <a href="index.html" class="logo">TECOCINAMOS</a>
+        <nav class="nav-links">
+          <a href="index.html">Inicio</a>
+          <a href="doc-api.html">API</a>
+          <a href="casos-uso.html">Casos de Uso</a>
+          <a href="diagrama-clases.html" class="active">Clases</a>
+          <a href="diagrama-er.html">ER</a>
+          <a href="diagrama-componentes.html">Componentes</a>
+          <a href="casos-prueba.html">Casos de Prueba</a>
+        </nav>
+        <button class="hamburger" aria-label="Abrir menú móvil">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+      <div id="mobile-menu">
+        <div class="menu-section">
+          <h3>Menú</h3>
+          <a href="index.html">Inicio</a>
+          <a href="doc-api.html">API</a>
+          <a href="casos-uso.html">Casos de Uso</a>
+          <a href="diagrama-clases.html" class="active">Diagrama Clases</a>
+          <a href="diagrama-er.html">Diagrama ER</a>
+          <a href="diagrama-componentes.html">Componentes</a>
+          <a href="casos-prueba.html">Casos de Prueba</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="main-container">
+      <section class="section">
+        <h1>Diagrama de Clases</h1>
+        <p>
+          El diagrama de clases UML muestra la estructura estática de las clases
+          en el backend de TECOCINAMOS, sus atributos y relaciones entre ellas.
+        </p>
+
+        <div class="img-container">
+          <img
+            src="assets/images/diagrama_clases.png"
+            alt="Diagrama de Clases UML"
+          />
+        </div>
+
+        <h2>Descripción de las Clases</h2>
+        <ul class="custom-list">
+          <li>
+            <strong>Usuario</strong>
+            <ul class="custom-list">
+              <li>id: Integer</li>
+              <li>nombre: String</li>
+              <li>email: String</li>
+              <li>contrasena: String</li>
+              <li>telefono: String</li>
+              <li>direccion: String</li>
+              <li>eliminado: Boolean</li>
+              <li>fechaEliminado: LocalDate</li>
+              <li>rol: Rol</li>
+              <li>pedidos: List&lt;Pedido&gt;</li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="custom-list">
+          <li>
+            <strong>Rol</strong>
+            <ul class="custom-list">
+              <li>id: Integer</li>
+              <li>nombreRol: String</li>
+              <li>usuarios: List&lt;Usuario&gt;</li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="custom-list">
+          <li>
+            <strong>Plato</strong>
+            <ul class="custom-list">
+              <li>id: Integer</li>
+              <li>nombrePlato: String</li>
+              <li>cantidad: String</li>
+              <li>precio: BigDecimal</li>
+              <li>stock: Integer</li>
+              <li>preparacionCasa: String</li>
+              <li>recomendaciones: String</li>
+              <li>fechaActualizacion: LocalDateTime</li>
+              <li>categoria: Categoria</li>
+              <li>ingredientes: List&lt;PlatoIngrediente&gt;</li>
+              <li>imageBaseName: String</li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="custom-list">
+          <li>
+            <strong>Categoria</strong>
+            <ul class="custom-list">
+              <li>id: Integer</li>
+              <li>nombre: String</li>
+              <li>platos: List&lt;Plato&gt;</li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="custom-list">
+          <li>
+            <strong>Ingrediente</strong>
+            <ul class="custom-list">
+              <li>id: Integer</li>
+              <li>nombre: String</li>
+              <li>categoria: String</li>
+              <li>cantidadEnvase: BigDecimal</li>
+              <li>unidadEnvase: String</li>
+              <li>precioEnvase: BigDecimal</li>
+              <li>precioUnitario: BigDecimal</li>
+              <li>unidad: String</li>
+              <li>proveedor: Proveedor</li>
+              <li>platos: List&lt;PlatoIngrediente&gt;</li>
+              <li>alergenos: List&lt;IngredienteAlergeno&gt;</li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="custom-list">
+          <li>
+            <strong>Proveedor</strong>
+            <ul class="custom-list">
+              <li>id: Integer</li>
+              <li>nombre: String</li>
+              <li>contacto: String</li>
+              <li>telefono: String</li>
+              <li>email: String</li>
+              <li>ingredientes: List&lt;Ingrediente&gt;</li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="custom-list">
+          <li>
+            <strong>Alergeno</strong>
+            <ul class="custom-list">
+              <li>id: Integer</li>
+              <li>nombre: String</li>
+              <li>ingredientes: List&lt;IngredienteAlergeno&gt;</li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="custom-list">
+          <li>
+            <strong>IngredienteAlergeno</strong>
+            <ul class="custom-list">
+              <li>id: Integer</li>
+              <li>ingrediente: Ingrediente</li>
+              <li>alergeno: Alergeno</li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="custom-list">
+          <li>
+            <strong>PlatoIngrediente</strong>
+            <ul class="custom-list">
+              <li>id: Integer</li>
+              <li>plato: Plato</li>
+              <li>ingrediente: Ingrediente</li>
+              <li>cantidadUsada: BigDecimal</li>
+              <li>unidad: String</li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="custom-list">
+          <li>
+            <strong>Estado</strong>
+            <ul class="custom-list">
+              <li>id: Integer</li>
+              <li>nombre: String</li>
+              <li>pedidos: List&lt;Pedido&gt;</li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="custom-list">
+          <li>
+            <strong>Pedido</strong>
+            <ul class="custom-list">
+              <li>id: Integer</li>
+              <li>usuario: Usuario</li>
+              <li>estado: Estado</li>
+              <li>fechaCreado: LocalDate</li>
+              <li>fechaEntrega: LocalDate</li>
+              <li>direccionEntrega: String</li>
+              <li>fechaActualizacion: LocalDateTime</li>
+              <li>detalles: List&lt;DetallesPedido&gt;</li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="custom-list">
+          <li>
+            <strong>DetallesPedido</strong>
+            <ul class="custom-list">
+              <li>id: Integer</li>
+              <li>pedido: Pedido</li>
+              <li>plato: Plato</li>
+              <li>cantidadPlato: Integer</li>
+              <li>descuento: BigDecimal</li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="custom-list">
+          <li>
+            <strong>LogAuditoria</strong>
+            <ul class="custom-list">
+              <li>id: Integer</li>
+              <li>entidad: String</li>
+              <li>campoModificado: String</li>
+              <li>valorAnterior: String</li>
+              <li>valorNuevo: String</li>
+              <li>fecha: LocalDateTime</li>
+              <li>accion: String</li>
+              <li>usuarioAdmin: Usuario</li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+
+      <footer>
+        <p>© 2025 Teresa Charlo Millán | Diagrama de clases</p>
+      </footer>
+    </div>
+
+    <script src="assets/js/scripts.js"></script>
+  </body>
+</html>

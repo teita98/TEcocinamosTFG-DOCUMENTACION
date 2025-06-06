@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TECOCINAMOS · Documentación</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <!-- ========== HEADER / NAVBAR ========== -->
+    <header>
+      <div class="nav-container">
+        <a href="index.html" class="logo">TECOCINAMOS</a>
+        <nav class="nav-links">
+          <a href="index.html" class="active">Inicio</a>
+          <a href="doc-api.html">API</a>
+          <a href="casos-uso.html">Casos de Uso</a>
+          <a href="diagrama-clases.html">Clases</a>
+          <a href="diagrama-er.html">ER</a>
+          <a href="diagrama-componentes.html">Componentes</a>
+          <a href="casos-prueba.html">Casos de Prueba</a>
+        </nav>
+        <button class="hamburger" aria-label="Abrir menú móvil">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+      <!-- Menú móvil -->
+      <div id="mobile-menu">
+        <div class="menu-section">
+          <h3>Menú</h3>
+          <a href="index.html" class="active">Inicio</a>
+          <a href="doc-api.html">API</a>
+          <a href="casos-uso.html">Casos de Uso</a>
+          <a href="diagrama-clases.html">Diagrama Clases</a>
+          <a href="diagrama-er.html">Diagrama ER</a>
+          <a href="diagrama-componentes.html">Componentes</a>
+          <a href="casos-prueba.html">Casos de Prueba</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- ========== MAIN CONTAINER ========== -->
+    <div class="main-container">
+      <!-- Hero / Landing -->
+      <section class="section hero">
+        <h1>TECOCINAMOS</h1>
+        <p>
+          Plataforma Web de Gestión para Servicios de Catering
+          <br />
+          Ciclo: DAM (Desarrollo de Aplicaciones Multiplataforma)
+          <br />
+          Alumno: <strong>Teresa Charlo Millán</strong>
+        </p>
+        <a
+          href="http://mediumturquoise-duck-730938.hostingersite.com/"
+          class="btn-primary"
+          target="_blank"
+          >Ir a la WEB</a
+        >
+      </section>
+
+      <!-- Descripción breve -->
+      <section class="section">
+        <h2>Resumen del Proyecto</h2>
+        <p>
+          <em>TECOCINAMOS</em> es una plataforma completa que conecta a clientes
+          y administradores de un servicio de catering. Permite a los usuarios
+          navegar por el catálogo de platos, realizar pedidos, recibir facturas
+          en PDF y gestionar todo desde un panel administrativo.
+        </p>
+
+        <p>Además, la plataforma envía <strong>correos automáticos</strong>:</p>
+        <ul class="custom-list">
+          <li>Email de bienvenida al registrarse.</li>
+          <li>Respuesta automática al formulario de contacto/ evento.</li>
+          <li>Notificación de confirmación cuando se realiza un pedido.</li>
+        </ul>
+
+        <br />
+        <p>Características más importantes del proyecto:</p>
+        <ul class="custom-list">
+          <li>
+            <strong>Cliente</strong>: Consulta el menú, añade platos al carrito,
+            programa pedidos y descarga facturas.
+          </li>
+          <li>
+            <strong>Administrador</strong>: Gestiona usuarios, roles,
+            proveedores, ingredientes, platos y pedidos.
+          </li>
+          <li>
+            Tecnología: Angular en frontend, Spring Boot en backend, MySQL como
+            base de datos.
+          </li>
+          <li>
+            Despliegue en la nube (Azure) y accesible desde móvil con código QR.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Tabla de Tecnologías -->
+      <section class="section">
+        <h2>Tecnologías & Herramientas</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Área</th>
+                <th>Tecnología / Herramienta</th>
+                <th>Descripción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Frontend</td>
+                <td>Angular 16</td>
+                <td>SPA responsiva, componentes modulares, servicios HTTP</td>
+              </tr>
+              <tr>
+                <td>CSS</td>
+                <td>Tailwind CSS</td>
+                <td>Diseño rápido y mobile-first</td>
+              </tr>
+              <tr>
+                <td>Backend</td>
+                <td>Spring Boot 3.4.4</td>
+                <td>API REST segura con JWT</td>
+              </tr>
+              <tr>
+                <td>Seguridad</td>
+                <td>Spring Security + JWT</td>
+                <td>Autenticación y autorización basada en roles</td>
+              </tr>
+              <tr>
+                <td>Base de Datos</td>
+                <td>MySQL 8</td>
+                <td>Entidad-Relación, índices, triggers de stock</td>
+              </tr>
+              <tr>
+                <td>Facturación</td>
+                <td>iText7 (kernel + layout)</td>
+                <td>Generación automática de facturas en PDF</td>
+              </tr>
+              <tr>
+                <td>Correo</td>
+                <td>Spring Mail</td>
+                <td>Envío de notificaciones de pedido</td>
+              </tr>
+              <tr>
+                <td>Control de Versiones</td>
+                <td>Git / GitHub</td>
+                <td>Historial de commits, ramas y Pull Requests</td>
+              </tr>
+              <tr>
+                <td>Despliegue</td>
+                <td>Azure App Service</td>
+                <td>Aloja el backend, base de datos en Azure MySQL</td>
+              </tr>
+              <tr>
+                <td>Hosting Frontend</td>
+                <td>Hostinger</td>
+                <td>Aloja el front</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Funcionalidades Principales (diseño responsive) -->
+      <section class="section funcionalidades-principales">
+        <h2>Funcionalidades Principales</h2>
+
+        <!-- Contenedor de cards -->
+        <div class="func-cards-container">
+          <!-- Card Cliente -->
+          <div class="func-card">
+            <h3>Perfil: Cliente</h3>
+            <ul class="func-list">
+              <li>Registro / Login</li>
+              <li>Ver catálogo de platos</li>
+              <li>Filtrar por categoría / buscar</li>
+              <li>Ver detalle de plato (ingredientes, alérgenos, imágenes)</li>
+              <li>Agregar al carrito / Realizar pedido</li>
+              <li>Descargar factura PDF</li>
+              <li>Ver historial de pedidos / estado</li>
+              <li>Editar perfil</li>
+            </ul>
+          </div>
+
+          <!-- Card Administrador -->
+          <div class="func-card">
+            <h3>Perfil: Administrador</h3>
+            <ul class="func-list">
+              <li>CRUD Usuarios</li>
+              <li>
+                Baja lógica de usuario: marca <code>eliminado=true</code> y
+                anonimiza nombre/email/teléfono/contraseña.
+              </li>
+              <li>CRUD Roles (asignar roles, desactivar)</li>
+              <li>CRUD Categorías / Alérgenos</li>
+              <li>CRUD Proveedores / Ingredientes (control de stock)</li>
+              <li>CRUD Platos (asignar ingredientes, base de imagen)</li>
+              <li>Gestión de Pedidos (cambiar estado)</li>
+              <li>Generar facturas en PDF</li>
+              <li>Ver estadísticas (platos más vendidos, facturación)</li>
+              <li>Mapa con pedidos “En Camino” (Google Maps API)</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer corto -->
+      <footer>
+        <p>© 2025 Teresa Charlo Millán | DAM 2024–2025</p>
+      </footer>
+    </div>
+
+    <script src="assets/js/scripts.js"></script>
+  </body>
+</html>

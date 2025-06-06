@@ -1,0 +1,423 @@
+/* ==============================================
+   VARIABLES DE COLOR
+   ============================================== */
+:root {
+  --clr-primary:  #2c3e50;   /* Azul oscuro */
+  --clr-secondary:#8fbad7;   /* Azul medio */
+  --clr-accent:   #e67e22;   /* Naranja */
+  --clr-light:    #ecf0f1;   /* Gris muy claro */
+  --clr-dark:     #1c4165;   /* Azul muy oscuro */
+  --clr-text:     #2c3e50;
+  --clr-bg:       #ffffff;
+  --clr-bg-alt:   #f8f9fa;
+}
+
+/* ==============================================
+   RESET Y TIPOGRAFÍA
+   ============================================== */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
+  scroll-behavior: smooth;
+  background-color: var(--clr-bg-alt);
+  color: var(--clr-text);
+}
+body {
+  background-color: var(--clr-bg-alt);
+  line-height: 1.6;
+}
+
+/* ==============================================
+   CABECERA Y NAVEGACIÓN
+   ============================================== */
+header {
+  position: sticky;
+  top: 0;
+  background-color: var(--clr-primary);
+  color: var(--clr-light);
+  z-index: 100;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: var(--clr-light);
+}
+nav.nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+nav.nav-links a {
+  color: var(--clr-light);
+  text-decoration: none;
+  font-size: 0.95rem;
+  position: relative;
+  transition: color 0.3s ease;
+}
+nav.nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -2px;
+  width: 0; height: 2px;
+  background-color: var(--clr-accent);
+  transition: width 0.3s ease;
+}
+nav.nav-links a:hover {
+  color: var(--clr-accent);
+}
+nav.nav-links a:hover::after {
+  width: 100%;
+}
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 1.5rem; height: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.hamburger span {
+  width: 100%;
+  height: 0.2rem;
+  background-color: var(--clr-light);
+  border-radius: 5px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Menu móvil */
+#mobile-menu {
+  position: fixed;
+  top: 0; left: 0;
+  width: 70%;
+  max-width: 300px;
+  height: 100vh;
+  background-color: var(--clr-primary);
+  padding: 2rem 1.5rem;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 200;
+  overflow-y: auto;
+}
+body.nav-open #mobile-menu {
+  transform: translateX(0);
+}
+#mobile-menu .menu-section {
+  margin-bottom: 2rem;
+}
+#mobile-menu h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  color: var(--clr-light);
+}
+#mobile-menu a {
+  display: block;
+  padding: 0.5rem 0;
+  color: var(--clr-light);
+  text-decoration: none;
+  font-size: 1rem;
+  border-bottom: 1px solid rgba(236,240,241,0.1);
+  transition: color 0.3s ease;
+}
+#mobile-menu a:hover {
+  color: var(--clr-accent);
+}
+
+/* ==============================================
+   ESTILOS DE CONTENIDO
+   ============================================== */
+.main-container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.section {
+  background-color: var(--clr-bg);
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.section h1,
+.section h2,
+.section h3 {
+  color: var(--clr-primary);
+  margin-bottom: 1rem;
+}
+.section p {
+  margin-bottom: 1rem;
+}
+
+/* Hero (sección introductoria en index.html) */
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 4rem 1rem;
+  background: linear-gradient(to right, var(--clr-dark), var(--clr-secondary));
+  color: var(--clr-light);
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+.hero p {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+.hero .btn-primary {
+  background-color: var(--clr-accent);
+  color: var(--clr-light);
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+.hero .btn-primary:hover {
+  background-color: #d35400;
+}
+
+/* Tablas */
+.table-container {
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+table th,
+table td {
+  padding: 0.75rem 1rem;
+  border: 1px solid #ddd;
+  text-align: left;
+  font-size: 0.95rem;
+}
+table th {
+  background-color: var(--clr-light);
+  color: var(--clr-primary);
+}
+table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Bloques de código */
+.code-block {
+  background-color: #ecf0f1;
+  border-left: 4px solid var(--clr-secondary);
+  padding: 1rem;
+  margin: 1rem 0;
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 0.95rem;
+  white-space: pre-wrap;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+/* Listas personalizadas */
+.custom-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.custom-list li {
+  position: relative;
+  padding-left: 1.5em;
+  margin-bottom: 0.6em;
+  font-size: 1rem;
+}
+.custom-list li::before {
+  content: '';
+  position: absolute;
+  top: 0.6em;
+  left: 0;
+  width: 0.4em;
+  height: 0.4em;
+  background-color: #005892;
+  border-radius: 50%;
+}
+.custom-list li .custom-list {
+  margin-top: 0.3em;
+  padding-left: 1em;
+}
+.custom-list li > strong {
+  display: inline-block;
+  margin-bottom: 0.3em;
+  font-size: 1.05rem;
+  color: #2c3e50;
+}
+.custom-list li:hover {
+  color: #1a242f;
+}
+
+/* Imágenes / diagramas */
+.img-container {
+  text-align: center;
+  margin: 1.5rem 0;
+}
+.img-container img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Pie de página */
+footer {
+  text-align: center;
+  padding: 1.5rem 0;
+  margin-top: 2rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* ==============================================
+   ESTILOS PARA INTERACCIÓN (etiquetas GET/POST)
+   ============================================== */
+.get {
+  background-color: rgb(89, 208, 89);
+  padding: 2px 4px;
+  border-radius: 2px;
+  color: white;
+}
+.post {
+  background-color: orange;
+  padding: 2px 4px;
+  border-radius: 2px;
+  color: white;
+}
+.delete {
+  background-color: red;
+  padding: 2px 4px;
+  border-radius: 2px;
+  color: white;
+}
+.put {
+  background-color: rgb(79, 79, 201);
+  padding: 2px 4px;
+  border-radius: 2px;
+  color: white;
+}
+
+/* ===============================
+   FUNCIONALIDADES PRINCIPALES 
+   =============================== */
+.funcionalidades-principales {
+  /* margen extra arriba y abajo */
+  margin: 2rem 0;
+}
+
+/* Contenedor para alinear cards en fila */
+.func-cards-container {
+  display: flex;
+  gap: 1.5rem;                /* separación horizontal entre cards */
+  flex-wrap: wrap;            /* si no cabe, que salte a la siguiente fila */
+  justify-content: space-between;
+}
+
+/* Cada card: fondo blanco, sombra y padding */
+.func-card {
+  background-color: var(--clr-bg); /* por defecto var(--clr-bg) = #fff */
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  flex: 1 1 calc(50% - 1.5rem); /* dos columnas en desktop, con gap */
+  min-width: 280px; /* que no se haga demasiado pequeño */
+  
+  /* Para que los <h3> y <ul> vayan separados */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Título de cada perfíl dentro de la card */
+.func-card h3 {
+  font-size: 1.2rem;
+  color: var(--clr-primary);
+  margin-bottom: 1rem;
+}
+
+/* Lista interna de funcionalidades: 
+   estilo de lista con viñetas pequeñas */
+.func-list {
+  list-style: disc inside;
+  color: var(--clr-text);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Opcional: si quieres que los <code> dentro del <li> tengan fondo claro */
+.func-list li code {
+  background-color: #f2f2f2;
+  padding: 0 0.25rem;
+  border-radius: 3px;
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 0.9rem;
+}
+
+/* ============ RESPONSIVE (MÓVIL) ============ */
+@media (max-width: 767px) {
+  /* Cada card ocupará 100% del ancho disponible */
+  .func-card {
+    flex: 1 1 100%;
+  }
+}
+
+/* 1) Contenedor con scroll horizontal para la tabla de ingredientes: */
+.tabla-ingredientes-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* 2) Asegura que la tabla ocupe el 100% de ese contenedor y no se expanda más */
+.tabla-ingredientes-wrapper .tabla-ingredientes {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* 3) Forzar “wrap” solo dentro de esta tabla en sus bloques <pre><code> */
+.tabla-ingredientes pre code {
+  white-space: pre-wrap;    /* permite que las líneas largas se partan */
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 4) Forzar “wrap” en los <summary> dentro de esta tabla */
+.tabla-ingredientes details summary {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+/* ==============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================== */
+@media (max-width: 768px) {
+  nav.nav-links {
+    display: none;
+  }
+  .hamburger {
+    display: flex;
+  }
+}

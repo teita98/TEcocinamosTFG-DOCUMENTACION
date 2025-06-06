@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TECOCINAMOS · Casos de Uso</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <!-- ========== HEADER / NAVBAR ========== -->
+    <header>
+      <div class="nav-container">
+        <a href="index.html" class="logo">TECOCINAMOS</a>
+        <nav class="nav-links">
+          <a href="index.html">Inicio</a>
+          <a href="doc-api.html">API</a>
+          <a href="casos-uso.html" class="active">Casos de Uso</a>
+          <a href="diagrama-clases.html">Clases</a>
+          <a href="diagrama-er.html">ER</a>
+          <a href="diagrama-componentes.html">Componentes</a>
+          <a href="casos-prueba.html">Casos de Prueba</a>
+        </nav>
+        <button class="hamburger" aria-label="Abrir menú móvil">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+      <div id="mobile-menu">
+        <div class="menu-section">
+          <h3>Menú</h3>
+          <a href="index.html">Inicio</a>
+          <a href="doc-api.html">API</a>
+          <a href="casos-uso.html" class="active">Casos de Uso</a>
+          <a href="diagrama-clases.html">Diagrama Clases</a>
+          <a href="diagrama-er.html">Diagrama ER</a>
+          <a href="diagrama-componentes.html">Componentes</a>
+          <a href="casos-prueba.html">Casos de Prueba</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- ========== CONTENIDO PRINCIPAL ========== -->
+    <div class="main-container">
+      <!-- Título -->
+      <section class="section">
+        <h1>Diagramas de Casos de Uso</h1>
+        <p>
+          En esta sección encontrarás el diagrma de casos de uso del actor
+          <strong>CLIENTE</strong> y el actor <strong>ADMIN</strong>. El
+          diagrama muestra las interacciones principales que estos usuarios
+          tienen con la plataforma TECOCINAMOS.
+        </p>
+      </section>
+
+      <!-- Caso de Uso: Cliente -->
+      <section class="section">
+        <h2>Actor: Cliente</h2>
+        <p>El Cliente puede:</p>
+        <ul class="custom-list">
+          <li>Ver el catálogo de platos disponibles</li>
+          <li>Filtrar por categorías o buscar por nombre</li>
+          <li>
+            Ver el detalle de cada plato (ingredientes, alérgenos, imágenes)
+          </li>
+          <li>Añadir uno o varios platos al carrito</li>
+          <li>Elegir fecha de entrega y dirección para su pedido</li>
+          <li>Confirmar el pedido y recibir notificación por email</li>
+          <li>
+            Ver su historial de pedidos con estado y descargar factura PDF
+          </li>
+          <li>Editar datos de perfil (nombre, teléfono, contraseña)</li>
+          <li>
+            Enviar formulario de contacto general (Contáctanos) → recibe correo
+            de confirmación automática
+          </li>
+          <li>
+            Enviar consulta de evento → recibe correo de confirmación automática
+          </li>
+          <li>Recibir factura en PDF al realizar pedido</li>
+        </ul>
+      </section>
+
+      <!-- Diagrama-->
+      <section>
+        <div class="img-container">
+          <img
+            src="assets/images/diagrama_caso_uso.png"
+            alt="Diagrama Casos de Uso Cliente"
+          />
+        </div>
+      </section>
+
+      <!-- Caso de Uso: Admin -->
+      <section class="section">
+        <h2>Actor: Administrador (ADMIN)</h2>
+        <p>El Administrador puede:</p>
+        <ul class="custom-list">
+          <li>
+            Gestionar usuarios: crear, editar, asignar roles y dar de baja (baja
+            lógica y anonimización de datos)
+          </li>
+          <li>
+            Gestionar roles: CRUD completo para roles (CLIENTE, ADMIN, COCINERO,
+            etc.)
+          </li>
+          <li>Gestionar categorías y alérgenos: CRUD completo</li>
+          <li>Gestionar proveedores e ingredientes: CRUD y control de stock</li>
+          <li>
+            Gestionar platos: CRUD, asignar ingredientes y nombre base de imagen
+          </li>
+          <li>
+            Gestionar pedidos: ver listado, filtrar por estado, cambiar estado
+          </li>
+          <li>Generar facturas en PDF para pedidos concretos</li>
+          <li>
+            Visualizar estadísticas de ventas, stock bajo y facturación mensual
+          </li>
+          <li>
+            Visualizar mapa con pedidos “En Camino” para optimizar reparto
+          </li>
+        </ul>
+      </section>
+
+      <!-- Footer -->
+      <footer>
+        <p>© 2025 Teresa Charlo Millán | Casos de Uso</p>
+      </footer>
+    </div>
+
+    <script src="assets/js/scripts.js"></script>
+  </body>
+</html>

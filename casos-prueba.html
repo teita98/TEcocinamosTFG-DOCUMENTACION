@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TECOCINAMOS · Casos de Prueba</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <!-- HEADER / NAVBAR -->
+    <header>
+      <div class="nav-container">
+        <a href="index.html" class="logo">TECOCINAMOS</a>
+        <nav class="nav-links">
+          <a href="index.html">Inicio</a>
+          <a href="doc-api.html">API</a>
+          <a href="casos-uso.html">Casos de Uso</a>
+          <a href="diagrama-clases.html">Clases</a>
+          <a href="diagrama-er.html">ER</a>
+          <a href="diagrama-componentes.html">Componentes</a>
+          <a href="casos-prueba.html" class="active">Casos de Prueba</a>
+        </nav>
+        <button class="hamburger" aria-label="Abrir menú móvil">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+      <div id="mobile-menu">
+        <div class="menu-section">
+          <h3>Menú</h3>
+          <a href="index.html">Inicio</a>
+          <a href="doc-api.html">API</a>
+          <a href="casos-uso.html">Casos de Uso</a>
+          <a href="diagrama-clases.html">Diagrama Clases</a>
+          <a href="diagrama-er.html">Diagrama ER</a>
+          <a href="diagrama-componentes.html">Componentes</a>
+          <a href="casos-prueba.html" class="active">Casos de Prueba</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="main-container">
+      <section class="section">
+        <h1>Casos de Prueba</h1>
+        <p>
+          A continuación se describen los principales escenarios de prueba para
+          la API REST de TECOCINAMOS, incluyendo peticiones correctas,
+          peticiones erróneas y sus respuestas esperadas. Se han probado todos
+          los endpoints críticos con Postman/CURL.
+        </p>
+
+        <!-- 1. Registro Usuario Existente -->
+        <section class="section" id="test-1">
+          <h2>1. Registro de Usuario con Email Existente</h2>
+          <p>
+            <strong>Descripción:</strong> Intentar registrar un usuario cuyo
+            email ya está en la base de datos; debe rechazarse.
+          </p>
+          <p><strong>Petición:</strong></p>
+          <div class="code-block">
+            <pre>
+POST {{base_url}}/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "nombre": "Admin Ejemplo 2",
+  "email": "admin@tecocinamos.com",
+  "contrasena": "cualquierCosa",
+  "telefono": "+34 600000003"
+}
+</pre
+            >
+          </div>
+          <p><strong>Respuesta Esperada:</strong></p>
+          <div class="code-block">
+            <pre>
+HTTP/1.1 400 Bad Request
+{
+  "timestamp": "2025-06-01T15:30:00.000Z",
+  "status": 400,
+  "error": "Error",
+  "message": "Ya existe un usuario con ese email"
+}
+</pre
+            >
+          </div>
+        </section>
+
+        <!-- 2. Login Incorrecto -->
+        <section class="section" id="test-2">
+          <h2>2. Login con Credenciales Incorrectas</h2>
+          <p>
+            <strong>Descripción:</strong> Intentar acceder con un email que no
+            existe; debe responder 401 Unauthorized.
+          </p>
+          <p><strong>Petición:</strong></p>
+          <div class="code-block">
+            <pre>
+POST {{base_url}}/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "noexiste@tecocinamos.com",
+  "contrasena": "xxx"
+}
+</pre
+            >
+          </div>
+          <p><strong>Respuesta Esperada:</strong></p>
+          <div class="code-block">
+            <pre>
+HTTP/1.1 401 Unauthorized
+{
+  "timestamp": "2025-06-01T15:35:00.000Z",
+  "status": 401,
+  "error": "Unauthorized",
+  "message": "Credenciales inválidas"
+}
+</pre
+            >
+          </div>
+        </section>
+
+        <!-- 3. Crear Plato con Categoría Inexistente -->
+        <section class="section" id="test-3">
+          <h2>3. Crear Plato (ADMIN) con Categoría Inexistente</h2>
+          <p>
+            <strong>Descripción:</strong> Intentar crear un plato asignando un
+            <code>categoriaId</code> que no existe; el servicio debe responder
+            404 Not Found.
+          </p>
+          <p><strong>Petición:</strong></p>
+          <div class="code-block">
+            <pre>
+POST {{base_url}}/api/v1/platos
+Authorization: Bearer {{token_admin}}
+Content-Type: application/json
+
+{
+  "nombrePlato": "Prueba Fallida",
+  "cantidad": "1 ración",
+  "precio": 10.00,
+  "stock": 5,
+  "preparacionCasa": "Texto",
+  "recomendaciones": "Texto",
+  "categoriaId": 99,
+  "ingredientesUsados": [],
+  "imageBaseName": "pruebaFallida"
+}
+</pre
+            >
+          </div>
+          <p><strong>Respuesta Esperada:</strong></p>
+          <div class="code-block">
+            <pre>
+HTTP/1.1 404 Not Found
+{
+  "timestamp": "2025-06-01T15:40:00.000Z",
+  "status": 404,
+  "error": "Error",
+  "message": "Categoría no encontrada"
+}
+</pre
+            >
+          </div>
+        </section>
+
+        <!-- 4. Pedido con Plato Inexistente -->
+        <section class="section" id="test-4">
+          <h2>4. Hacer Pedido (CLIENTE) con Plato Inexistente</h2>
+          <p>
+            <strong>Descripción:</strong> Intentar generar un pedido incluyendo
+            un <code>platoId</code> que no existe; debe responder 404 Not Found.
+          </p>
+          <p><strong>Petición:</strong></p>
+          <div class="code-block">
+            <pre>
+POST {{base_url}}/api/v1/pedidos
+Authorization: Bearer {{token_cliente}}
+Content-Type: application/json
+
+{
+  "fechaEntrega": "2025-06-15",
+  "direccionEntrega": "Av. Imaginaria 123",
+  "detalles": [
+    {
+      "platoId": 999,
+      "cantidadPlato": 2,
+      "descuento": 0
+    }
+  ]
+}
+</pre
+            >
+          </div>
+          <p><strong>Respuesta Esperada:</strong></p>
+          <div class="code-block">
+            <pre>
+HTTP/1.1 404 Not Found
+{
+  "timestamp": "2025-06-01T15:45:00.000Z",
+  "status": 404,
+  "error": "Error",
+  "message": "Plato no encontrado: ID 999"
+}
+</pre
+            >
+          </div>
+        </section>
+
+        <!-- 5. Cliente intenta cambiar estado de pedido -->
+        <section class="section" id="test-5">
+          <h2>5. Cambiar Estado de Pedido (CLIENTE) ⇒ 403 Forbidden</h2>
+          <p>
+            <strong>Descripción:</strong> Un cliente normal intenta acceder a la
+            ruta de cambio de estado de pedido, debe responder 403 Forbidden.
+          </p>
+          <p><strong>Petición:</strong></p>
+          <div class="code-block">
+            <pre>
+PUT {{base_url}}/api/v1/pedidos/1/estado/2
+Authorization: Bearer {{token_cliente}}
+</pre
+            >
+          </div>
+          <p><strong>Respuesta Esperada:</strong></p>
+          <div class="code-block">
+            <pre>
+HTTP/1.1 403 Forbidden
+{
+  "timestamp": "2025-06-01T15:50:00.000Z",
+  "status": 403,
+  "error": "Forbidden",
+  "message": "Access Denied"
+}
+</pre
+            >
+          </div>
+        </section>
+
+        <!-- 6. Ver catálogo sin token -->
+        <section class="section" id="test-6">
+          <h2>6. Ver Catálogo de Platos (Público) ⇒ 200 OK</h2>
+          <p>
+            <strong>Descripción:</strong> Acceso público a la lista de platos,
+            sin necesidad de JWT.
+          </p>
+          <p><strong>Petición:</strong></p>
+          <div class="code-block">
+            <pre>
+GET {{base_url}}/api/v1/platos
+</pre
+            >
+          </div>
+          <p><strong>Respuesta Esperada:</strong></p>
+          <div class="code-block">
+            <pre>
+HTTP/1.1 200 OK
+[
+  {
+    "id": 1,
+    "nombrePlato": "Croquetas de Bacalao",
+    "precio": 6.50,
+    "categoria": "Entrantes"
+  },
+  ...
+]
+</pre
+            >
+          </div>
+        </section>
+
+        <!-- 7. Eliminar Usuario (ADMIN) -->
+        <section class="section" id="test-7">
+          <h2>7. Eliminar Usuario (ADMIN) ⇒ 204 No Content</h2>
+          <p>
+            <strong>Descripción:</strong> Un administrador elimina (borrado
+            lógico) a un usuario existente.
+          </p>
+          <p><strong>Petición:</strong></p>
+          <div class="code-block">
+            <pre>
+DELETE {{base_url}}/api/v1/users/2
+Authorization: Bearer {{token_admin}}
+</pre
+            >
+          </div>
+          <p><strong>Respuesta Esperada:</strong></p>
+          <div class="code-block">
+            <pre>
+HTTP/1.1 204 No Content
+</pre
+            >
+          </div>
+        </section>
+
+        <!-- 8. Generar Factura PDF (ADMIN) -->
+        <section class="section" id="test-9">
+          <h2>8. Generar Factura en PDF (ADMIN)</h2>
+          <p>
+            <strong>Descripción:</strong> El administrador solicita la factura
+            PDF de un pedido existente.
+          </p>
+          <p><strong>Petición:</strong></p>
+          <div class="code-block">
+            <pre>
+GET {{base_url}}/api/v1/facturas/1
+Authorization: Bearer {{token_admin}}
+</pre
+            >
+          </div>
+          <p><strong>Respuesta Esperada:</strong></p>
+          <ul class="list-style">
+            <li>
+              <code>HTTP/1.1 200 OK</code>,
+              <code>Content-Type: application/pdf</code>,
+              <code
+                >Content-Disposition: attachment; filename="factura_1.pdf"</code
+              >.
+            </li>
+            <li>
+              Si el pedido no existe: <code>404 Not Found</code> con JSON
+              <code>{ "message": "Pedido no encontrado" }</code>.
+            </li>
+          </ul>
+        </section>
+
+        <footer>
+          <p>© 2025 Tersa Charlo Millán | Casos de Prueba</p>
+        </footer>
+      </section>
+    </div>
+
+    <script src="assets/js/scripts.js"></script>
+  </body>
+</html>
